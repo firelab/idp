@@ -45,12 +45,21 @@ try {
 } catch(e) { alert(e.message); } 
 } 
 </script>
+
+<?php 
+    $subject = $_SERVER['SSL_CLIENT_S_DN'] ;
+    $sub_re = '/UID=(\d+)\+CN=([[:alnum:]\.\s]+),OU=Department of Agriculture,O=U.S. Government,C=US/';
+    preg_match($sub_re, $subject, $matches) ;
+    $name_on_card = $matches[2];
+    $fedidcard = $matches[1] . '@fedidcard.gov';
+?>
+<title>Registration for <?php echo $name_on_card; ?></title>
 </head>
 <body>
 
-<h1>My Web Page</h1>
-
+<h2>Active Directory information about <?php echo $name_on_card; ?></h2>
 <ol>
+<li>Card ID #: <?php echo $fedidcard; ?></li>
 <li id="domain">domain</li>
 <li id="cmdtxt">query text</li>
 <li id="numrecords"># records</li>
@@ -60,7 +69,7 @@ try {
 
 <button type="button" 
         onclick="document.getElementById('demo').innerHTML=Search(
-	'<?php $_SERVER['SSL_CLIENT_S_DN'] ?>')">Find <?php $_SERVER['SSL_CLIENT_S_DN']?></button>
+	'<?php echo $fedidcard; ?>')">Find <?php echo $name_on_card; ?></button>
 
 </body>
 
