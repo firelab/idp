@@ -103,12 +103,15 @@ function create_disabled_user($ds)
 function set_user_pwd($ds,$dn) 
 {
    $pwd = "\"".$_POST["password"]."\"" ; 
+   echo "<p>Password is: ". $pwd . "</p>" ;
    $info["unicodePwd"] = iconv("UTF-8", "UTF-16LE", $pwd) ;
 
    if (!ldap_mod_replace( $ds, $dn, $info )) {
         echo "Failed to set password!"  ;
    }
 }
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 // connect to ldap server
 $ldapconn = ldap_connect("ldaps://ad.firelab.org/")
@@ -134,6 +137,9 @@ if ($ldapconn) {
 
     ldap_close($ldapconn);
 
+}
+} else { 
+    http_response_code(405) ; 
 }
 ?>
 
