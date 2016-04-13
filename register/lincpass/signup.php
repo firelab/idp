@@ -103,7 +103,6 @@ function create_disabled_user($ds)
 function set_user_pwd($ds,$dn) 
 {
    $pwd = "\"".$_POST["password"]."\"" ; 
-   echo "<p>Password is: ". $pwd . "</p>" ;
    $info["unicodePwd"] = iconv("UTF-8", "UTF-16LE", $pwd) ;
 
    if (!ldap_mod_replace( $ds, $dn, $info )) {
@@ -126,10 +125,16 @@ if ($ldapconn) {
     if ($ldapbind) {
         // create user (disabled/no password)
         $dn = create_disabled_user($ldapconn);
-        // set password
-        set_user_pwd($ldapconn,$dn) ; 
-        // enable user
-        userenable($ldapconn,$_POST["cn"]) ; 
+        if ($dn) { 
+            // set password
+            set_user_pwd($ldapconn,$dn) ; 
+            // enable user
+            userenable($ldapconn,$_POST["cn"]) ; 
+            echo "<ol><li>Registered account for ".$_POST["cn"] ;
+            echo " (".$_SERVER["SSL_CLIENT_S_DN_CN"].")</li>" ;
+            echo "<li>You never need to do this again.</li>";
+            echo "<li>You may now close your browser window.</li></ol>" ; 
+        }
     } else {
         // set http error status and maybe return something helpful
     }
