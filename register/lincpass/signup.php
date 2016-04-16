@@ -110,6 +110,15 @@ function set_user_pwd($ds,$dn)
    }
 }
 
+// function adds the user to the "Insiders" group.
+function add_user_to_group($ds, $group_dn, $user_dn)
+{
+    $info["member"] = $user_dn ; 
+    return ldap_mod_add($ds, $group_dn, $info) ; 
+}
+
+
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 // connect to ldap server
@@ -130,6 +139,10 @@ if ($ldapconn) {
             set_user_pwd($ldapconn,$dn) ; 
             // enable user
             userenable($ldapconn,$_POST["cn"]) ; 
+            // add user to Insiders group
+            add_user_to_group($ldapconn,
+                      "cn=Insiders,cn=Users,dc=firelab,dc=org", $dn) ;
+
             echo "<ol><li>Registered account for ".$_POST["cn"] ;
             echo " (".$_SERVER["SSL_CLIENT_S_DN_CN"].")</li>" ;
             echo "<li>You never need to do this again.</li>";
