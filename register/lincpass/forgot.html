@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<head>
+<title>Resetting Password for <?php echo $_SERVER["SSL_CLIENT_S_DN_CN"]?></title>
+
+<script>
+function checkPass()
+{
+    //Store the password field objects into variables ...
+    var pass1 = document.getElementById('pass1');
+    var pass2 = document.getElementById('pass2');
+    //Store the submit button
+    var submit = document.getElementById('submit') ; 
+    //Store the Confimation Message Object ...
+    var message = document.getElementById('confirmMessage');
+    //Set the colors we will be using ...
+    var goodColor = "#66cc66";
+    var badColor = "#ff6666";
+    //Compare the values in the password field 
+    //and the confirmation field
+    if(pass1.value == pass2.value){
+        //The passwords match. 
+        //Set the color to the good color and inform
+        //the user that they have entered the correct password 
+        submit.disabled = false ;
+        pass2.style.backgroundColor = goodColor;
+        message.style.color = goodColor;
+        message.innerHTML = "Passwords Match!"
+    }else{
+        //The passwords do not match.
+        //Set the color to the bad color and
+        //notify the user.
+        pass2.style.backgroundColor = badColor;
+        message.style.color = badColor;
+        message.innerHTML = "Passwords Do Not Match!"
+        submit.disabled = true ; 
+    }
+}  
+</script>
+</head>
+<body>
+
+<form method="post" action="reset.php" accept-charset="UTF-8">
+  <div>
+    <label for="pass1">Enter New Password:</label>
+    <input type="password" id="pass1" name="password" /> <br />
+  </div>
+  <div>
+    <label for="pass2">Enter Same Password again:</label>
+    <input type="password" id="pass2" onkeyup="checkPass(); return false;" name="confirm-password" /> <br /> 
+  </div>
+  <input type="submit" id="submit" disabled="true" value="Change Password" disabled />
+  <span id="confirmMessage"/>
+</form>
+</body>

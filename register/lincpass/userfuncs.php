@@ -98,9 +98,11 @@ function set_user_pwd($ds,$dn)
    $pwd = "\"".$_POST["password"]."\"" ; 
    $info["unicodePwd"] = iconv("UTF-8", "UTF-16LE", $pwd) ;
 
-   if (!ldap_mod_replace( $ds, $dn, $info )) {
+   $retval = ldap_mod_replace( $ds, $dn, $info ) ; 
+   if (! $retval ) {
         echo "Failed to set password!"  ;
    }
+   return $retval ; 
 }
 
 // function adds the user to the "Insiders" group.
@@ -110,4 +112,23 @@ function add_user_to_group($ds, $group_dn, $user_dn)
     return ldap_mod_add($ds, $group_dn, $info) ; 
 }
 
+//
+// function to locate a user's dn by the userprincipal name attribute
+// (which should also be the UID in the Lincpass certificate.)
+//
+function find_user_by_upn($ds, $upn) 
+{
+    $attrs = array("distinguishedName") ; // just don't return everything
+    $filter = "(userPrincipalName=".$upn.")" ; 
+    $base = "ou=Realms,dc=firelab,dc=org" ; 
+    $rs = ldap_search($ds, $base, $filter, $attrs) ; 
+
+    $dn = FALSE ; 
+    if ($rs) { 
+        $entry = ldap_first_entry($ds, $rs) ; 
+        $data  = ldap_get_attributes($ds,$entry); 
+        $dn = $data["distinguishedName"][0] ; 
+    } 
+    return $dn ; 
+}
 ?>
